@@ -4,12 +4,12 @@ import {
   getPackageManagerCommand,
 } from '@nx/devkit';
 import {
-  normalizePerformanceReport,
   cleanupProject,
   createFile,
   exists,
   killProcessAndPorts,
   newProject,
+  normalizePerformanceReport,
   readFile,
   readJson,
   runCLI,
@@ -1017,6 +1017,26 @@ describe('nx release', () => {
         )
       ).length
     ).toEqual(1);
+
+    const releaseOutputWithTag = runCLI('release patch -y --tag=next');
+
+    expect(
+      releaseOutputWithTag.match(
+        new RegExp(`Published to ${e2eRegistryUrl} with tag "next"`, 'g')
+      ).length
+    ).toEqual(3);
+
+    expect(
+      execSync(`new view  @proj/${pkg1}@next version`).toString().trim()
+    ).toEqual('1200.0.1');
+
+    expect(
+      execSync(`new view  @proj/${pkg2}@next version`).toString().trim()
+    ).toEqual('1200.0.1');
+
+    expect(
+      execSync(`new view  @proj/${pkg3}@next version`).toString().trim()
+    ).toEqual('1200.0.1');
 
     // define two release groups that are released separately to ensure the --from ref is selected correctly
     updateJson<NxJsonConfiguration>('nx.json', (nxJson) => {

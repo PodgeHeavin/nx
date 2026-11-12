@@ -88,7 +88,7 @@ export type ChangelogOptions = NxReleaseArgs &
   };
 
 export type PublishOptions = NxReleaseArgs &
-  Partial<RunManyOptions> & { outputStyle?: OutputStyle } & FirstReleaseArgs & {
+  Partial<RunManyOptions> & { outputStyle?: OutputStyle; } & FirstReleaseArgs & {
     registry?: string;
     tag?: string;
     access?: string;
@@ -121,6 +121,7 @@ export type ReleaseOptions = NxReleaseArgs &
     preid?: VersionOptions['preid'];
     skipPublish?: boolean;
     otp?: number;
+    tag?: string;
   };
 
 export type VersionPlanArgs = {
@@ -245,6 +246,11 @@ const releaseCommand: CommandModule<NxReleaseArgs, ReleaseOptions> = {
             type: 'number',
             description:
               'A one-time password for publishing to a registry that requires 2FA.',
+          })
+          .option('tag', {
+            type: 'string',
+            description:
+              'The distribution tag to apply to the published package.',
           })
           .check((argv) => {
             if (argv.yes !== undefined && argv.skipPublish !== undefined) {
